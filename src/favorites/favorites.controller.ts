@@ -7,7 +7,7 @@ import {
   Delete,
   NotFoundException,
   HttpException,
-  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { Favorites } from './interfaces/favorites.interface';
@@ -44,6 +44,7 @@ export class FavoritesController {
   }
 
   @Delete('track/:id')
+  @HttpCode(204)
   deleteTrack(@Param('id') id: string): void {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
     this.favoritesService.deleteTrack(id);
@@ -63,6 +64,7 @@ export class FavoritesController {
   }
 
   @Delete('album/:id')
+  @HttpCode(204)
   deleteAlbum(@Param('id') id: string): void {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
     this.favoritesService.deleteAlbum(id);
@@ -82,6 +84,7 @@ export class FavoritesController {
   }
 
   @Delete('artist/:id')
+  @HttpCode(204)
   deleteArtist(@Param('id') id: string): void {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
     this.favoritesService.deleteArtist(id);

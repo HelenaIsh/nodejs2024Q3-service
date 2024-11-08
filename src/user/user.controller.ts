@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/user.dto';
@@ -44,6 +45,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   delete(@Param('id') id: string): void {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
     this.userService.delete(id);

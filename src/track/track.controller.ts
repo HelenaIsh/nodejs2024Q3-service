@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   BadRequestException,
+  HttpCode
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { Track } from './interfaces/track.interface';
@@ -43,6 +44,7 @@ export class TrackController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   delete(@Param('id') id: string): void {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
     this.trackService.delete(id);

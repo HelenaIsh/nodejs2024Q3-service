@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import { Artist } from './interfaces/artist.interface';
 import { ArtistService } from './artist.service';
@@ -43,6 +44,7 @@ export class ArtistController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   delete(@Param('id') id: string): void {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
     this.artistService.delete(id);
