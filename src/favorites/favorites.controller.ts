@@ -28,18 +28,14 @@ export class FavoritesController {
   ) {}
 
   @Get()
-  findAll(): {artists: Artist[], albums: Album[], tracks: Track[]} {
+  findAll(): { artists: Artist[]; albums: Album[]; tracks: Track[] } {
     const favs = this.favoritesService.findAll();
     return {
       artists: favs.artists.map((artistId) =>
         this.artistService.findOne(artistId),
       ),
-      albums: favs.albums.map((albumId) =>
-        this.albumService.findOne(albumId),
-      ),
-      tracks: favs.tracks.map((trackId) =>
-        this.trackService.findOne(trackId),
-      ),
+      albums: favs.albums.map((albumId) => this.albumService.findOne(albumId)),
+      tracks: favs.tracks.map((trackId) => this.trackService.findOne(trackId)),
     };
   }
 
