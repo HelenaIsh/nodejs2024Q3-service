@@ -10,11 +10,13 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { Favorites } from './interfaces/favorites.interface';
 import { TrackService } from 'src/track/track.service';
 import { isInstance, isUUID } from 'class-validator';
 import { AlbumService } from 'src/album/album.service';
 import { ArtistService } from 'src/artist/artist.service';
+import { Artist } from 'src/artist/interfaces/artist.interface';
+import { Album } from 'src/album/interfaces/album.interface';
+import { Track } from 'src/track/interfaces/track.interface';
 
 @Controller('favs')
 export class FavoritesController {
@@ -26,8 +28,19 @@ export class FavoritesController {
   ) {}
 
   @Get()
-  findAll(): Favorites {
-    return this.favoritesService.findAll();
+  findAll(): {artists: Artist[], albums: Album[], tracks: Track[]} {
+    const favs = this.favoritesService.findAll();
+    return {
+      artists: favs.artists.map((artistId) =>
+        this.artistService.findOne(artistId),
+      ),
+      albums: favs.albums.map((albumId) =>
+        this.albumService.findOne(albumId),
+      ),
+      tracks: favs.tracks.map((trackId) =>
+        this.trackService.findOne(trackId),
+      ),
+    };
   }
 
   @Post('track/:id')
