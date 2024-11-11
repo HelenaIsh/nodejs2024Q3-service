@@ -1,11 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Favorites } from './interfaces/favorites.interface';
-import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class FavoritesService {
-  constructor(private readonly trackService: TrackService) {}
-
   private favorites: Favorites = { artists: [], albums: [], tracks: [] };
 
   findAll(): Favorites {
@@ -17,13 +14,12 @@ export class FavoritesService {
     return id;
   }
 
-  deleteTrack(id: string): void {
-    const trackIndex = this.favorites.tracks.findIndex(
-      (trackId) => trackId === id,
-    );
-    if (trackIndex === -1)
-      throw new NotFoundException(`Track with id ${id} not found`);
-    this.favorites.tracks.splice(trackIndex, 1);
+  getTrackIndex(id: string): number {
+    return this.favorites.tracks.findIndex((trackId) => trackId === id);
+  }
+
+  deleteTrack(trackIndex: number): void {
+    if (trackIndex !== -1) this.favorites.tracks.splice(trackIndex, 1);
   }
 
   addAlbum(id: string): string {
@@ -31,13 +27,12 @@ export class FavoritesService {
     return id;
   }
 
-  deleteAlbum(id: string): void {
-    const albumIndex = this.favorites.albums.findIndex(
-      (albumId) => albumId === id,
-    );
-    if (albumIndex === -1)
-      throw new NotFoundException(`Album with id ${id} not found`);
-    this.favorites.tracks.splice(albumIndex, 1);
+  getAlbumIndex(id: string): number {
+    return this.favorites.albums.findIndex((albumId) => albumId === id);
+  }
+
+  deleteAlbum(albumIndex: number): void {
+    if (albumIndex !== -1) this.favorites.albums.splice(albumIndex, 1);
   }
 
   addArtist(id: string): string {
@@ -45,12 +40,11 @@ export class FavoritesService {
     return id;
   }
 
-  deleteArtist(id: string): void {
-    const artistIndex = this.favorites.artists.findIndex(
-      (artistId) => artistId === id,
-    );
-    if (artistIndex === -1)
-      throw new NotFoundException(`Artist with id ${id} not found`);
-    this.favorites.tracks.splice(artistIndex, 1);
+  getArtistIndex(id: string): number {
+    return this.favorites.artists.findIndex((artistId) => artistId === id);
+  }
+
+  deleteArtist(artistIndex: number): void {
+    if (artistIndex !== -1) this.favorites.artists.splice(artistIndex, 1);
   }
 }

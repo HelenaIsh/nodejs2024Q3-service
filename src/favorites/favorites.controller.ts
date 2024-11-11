@@ -47,7 +47,10 @@ export class FavoritesController {
   @HttpCode(204)
   deleteTrack(@Param('id') id: string): void {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
-    this.favoritesService.deleteTrack(id);
+    const trackIndex = this.favoritesService.getTrackIndex(id);
+    if (trackIndex === -1)
+      throw new NotFoundException(`Track with id ${id} not found`);
+    this.favoritesService.deleteTrack(trackIndex);
   }
 
   @Post('album/:id')
@@ -67,7 +70,10 @@ export class FavoritesController {
   @HttpCode(204)
   deleteAlbum(@Param('id') id: string): void {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
-    this.favoritesService.deleteAlbum(id);
+    const albumIndex = this.favoritesService.getAlbumIndex(id);
+    if (albumIndex === -1)
+      throw new NotFoundException(`Album with id ${id} not found`);
+    this.favoritesService.deleteAlbum(albumIndex);
   }
 
   @Post('artist/:id')
@@ -87,6 +93,9 @@ export class FavoritesController {
   @HttpCode(204)
   deleteArtist(@Param('id') id: string): void {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
-    this.favoritesService.deleteArtist(id);
+    const artistIndex = this.favoritesService.getArtistIndex(id);
+    if (artistIndex === -1)
+      throw new NotFoundException(`Artist with id ${id} not found`);
+    this.favoritesService.deleteArtist(artistIndex);
   }
 }

@@ -6,9 +6,11 @@ import {
 import { Track } from './interfaces/track.interface';
 import { CreateTrackDto, UpdateTrackDto } from './dto/track.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 @Injectable()
 export class TrackService {
+  constructor(private readonly favoritesService: FavoritesService) {}
   private tracks: Track[] = [];
 
   findAll(): Track[] {
@@ -46,6 +48,19 @@ export class TrackService {
     const trackIndex = this.tracks.findIndex((track) => track.id === id);
     if (trackIndex === -1)
       throw new NotFoundException(`Track with id ${id} not found`);
+    this.favoritesService.deleteTrack(this.favoritesService.getTrackIndex(id));
     this.tracks.splice(trackIndex, 1);
+  }
+
+  deleteAlbum(albumId: string): void {
+    this.tracks = this.tracks.map((track) =>
+      track.albumId !== albumId ? track : { ...track, albumId: null },
+    );
+  }
+
+  deleteArtist(artistId: string): void {
+    this.tracks = this.tracks.map((track) =>
+      track.artistId !== artistId ? track : { ...track, artistId: null },
+    );
   }
 }
