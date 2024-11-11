@@ -20,7 +20,7 @@ export class CreateTrackDto {
 
 export class UpdateTrackDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   name: string;
 
   @IsString()
@@ -32,6 +32,6 @@ export class UpdateTrackDto {
   albumId: string;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   duration: number;
 }

@@ -16,11 +16,11 @@ export class CreateAlbumDto {
 
 export class UpdateAlbumDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   name: string;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   year: number;
 
   @IsString()
