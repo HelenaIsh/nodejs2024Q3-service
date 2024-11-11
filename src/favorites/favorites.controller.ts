@@ -49,7 +49,8 @@ export class FavoritesController {
         throw new HttpException(`Track with id ${id} does not exist`, 422);
       }
     }
-    return this.favoritesService.addTrack(id);
+    const trackIndex = this.favoritesService.getTrackIndex(id);
+    if (trackIndex === -1) return this.favoritesService.addTrack(id);
   }
 
   @Delete('track/:id')
@@ -72,7 +73,8 @@ export class FavoritesController {
         throw new HttpException(`Album with id ${id} does not exist`, 422);
       }
     }
-    return this.favoritesService.addAlbum(id);
+    const albumIndex = this.favoritesService.getAlbumIndex(id);
+    if (albumIndex === -1) return this.favoritesService.addAlbum(id);
   }
 
   @Delete('album/:id')
@@ -95,7 +97,8 @@ export class FavoritesController {
         throw new HttpException(`Artist with id ${id} does not exist`, 422);
       }
     }
-    return this.favoritesService.addArtist(id);
+    const artistIndex = this.favoritesService.getArtistIndex(id);
+    if (artistIndex === -1) return this.favoritesService.addArtist(id);
   }
 
   @Delete('artist/:id')
