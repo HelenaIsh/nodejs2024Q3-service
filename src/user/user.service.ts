@@ -21,10 +21,11 @@ export class UserService {
     const users = await this.userRepository.find({
       select: ['id', 'login', 'version', 'createdAt', 'updatedAt'],
     });
-    return users;  }
+    return users;
+  }
 
-    async findOne(id: string): Promise<User> {
-    const user =  await this.userRepository.findOne({ where: { id } });
+  async findOne(id: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
     return { ...user, password: undefined };
   }
@@ -39,24 +40,27 @@ export class UserService {
       updatedAt: Date.now(),
     };
     await this.userRepository.save(newUser);
-    return { ...newUser, password: undefined }
+    return { ...newUser, password: undefined };
   }
 
-  async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): Promise<User> {
-    const user =  await this.userRepository.findOne({ where: { id } });
+  async updatePassword(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
     if (user.password !== updatePasswordDto.oldPassword)
       throw new ForbiddenException('Old password is incorrect');
-    
+
     const newUser = await this.userRepository.preload({
       id,
       password: updatePasswordDto.newPassword,
       version: user.version + 1,
       createdAt: +user.createdAt,
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
     });
     await this.userRepository.save(newUser);
-    return { ...newUser, password: undefined }
+    return { ...newUser, password: undefined };
   }
 
   async delete(id: string): Promise<void> {

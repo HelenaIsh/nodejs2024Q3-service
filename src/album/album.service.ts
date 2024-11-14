@@ -51,7 +51,9 @@ export class AlbumService {
       throw new NotFoundException(`Album with id ${id} not found`);
     }
     this.trackService.deleteAlbum(id);
-    this.favoritesService.deleteAlbum(await this.favoritesService.getAlbumIndex(id));
+    this.favoritesService.deleteAlbum(
+      await this.favoritesService.getAlbumIndex(id),
+    );
   }
 
   async deleteArtist(artistId: string): Promise<void> {

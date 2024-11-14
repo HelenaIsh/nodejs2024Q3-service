@@ -11,15 +11,15 @@ export class TrackService {
   constructor(
     private readonly favoritesService: FavoritesService,
     @InjectRepository(Track)
-    private readonly trackRepository: Repository<Track>,) {
-  }
+    private readonly trackRepository: Repository<Track>,
+  ) {}
 
   async findAll(): Promise<Track[]> {
     return await this.trackRepository.find();
   }
 
   async findOne(id: string): Promise<Track> {
-    const track =  await this.trackRepository.findOne({ where: { id } });
+    const track = await this.trackRepository.findOne({ where: { id } });
     if (!track) throw new NotFoundException(`Track with id ${id} not found`);
     return { ...track };
   }
@@ -49,12 +49,13 @@ export class TrackService {
     if (result.affected === 0) {
       throw new NotFoundException(`Track with id ${id} not found`);
     }
-    await this.favoritesService.deleteTrack(await this.favoritesService.getTrackIndex(id));
+    await this.favoritesService.deleteTrack(
+      await this.favoritesService.getTrackIndex(id),
+    );
   }
 
   async deleteAlbum(albumId: string): Promise<void> {
     await this.trackRepository.update({ albumId }, { albumId: null });
-
   }
 
   async deleteArtist(artistId: string): Promise<void> {

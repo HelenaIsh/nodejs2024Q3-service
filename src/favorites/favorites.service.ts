@@ -33,7 +33,7 @@ export class FavoritesService {
   async getTrackIndex(id: string): Promise<number> {
     const favorites = await this.getFavorites();
     const trackIndex = favorites.tracks.findIndex((trackId) => trackId === id);
-    return trackIndex
+    return trackIndex;
   }
 
   async deleteTrack(trackIndex: number): Promise<string> {
@@ -53,7 +53,7 @@ export class FavoritesService {
   async getAlbumIndex(id: string): Promise<number> {
     const favorites = await this.getFavorites();
     const albumIndex = favorites.albums.findIndex((albumId) => albumId === id);
-    return albumIndex
+    return albumIndex;
   }
 
   async deleteAlbum(albumIndex: number): Promise<string> {
@@ -72,8 +72,10 @@ export class FavoritesService {
 
   async getArtistIndex(id: string): Promise<number> {
     const favorites = await this.getFavorites();
-    const artistIndex = favorites.artists.findIndex((artistId) => artistId === id);
-    return artistIndex
+    const artistIndex = favorites.artists.findIndex(
+      (artistId) => artistId === id,
+    );
+    return artistIndex;
   }
 
   async deleteArtist(artyistIndex: number): Promise<string> {
