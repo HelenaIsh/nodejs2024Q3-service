@@ -52,8 +52,8 @@ export class ArtistService {
       throw new NotFoundException(`Artist with id ${id} not found`);
     }
     await this.albumService.deleteArtist(id);
-    this.favoritesService.deleteArtist(
-      this.favoritesService.getArtistIndex(id),
+    await this.favoritesService.deleteArtist(
+      await this.favoritesService.getArtistIndex(id),
     );
     this.trackService.deleteArtist(id);
   }

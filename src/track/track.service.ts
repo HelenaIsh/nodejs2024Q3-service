@@ -40,11 +40,11 @@ export class TrackService {
     return updatedTrack;
   }
 
-  delete(id: string): void {
+  async delete(id: string): Promise<void> {
     const trackIndex = this.tracks.findIndex((track) => track.id === id);
     if (trackIndex === -1)
       throw new NotFoundException(`Track with id ${id} not found`);
-    this.favoritesService.deleteTrack(this.favoritesService.getTrackIndex(id));
+    await this.favoritesService.deleteTrack(await this.favoritesService.getTrackIndex(id));
     this.tracks.splice(trackIndex, 1);
   }
 

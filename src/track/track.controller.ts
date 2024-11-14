@@ -109,8 +109,8 @@ export class TrackController {
 
   @Delete(':id')
   @HttpCode(204)
-  delete(@Param('id') id: string): void {
+  async delete(@Param('id') id: string): Promise<void> {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
-    this.trackService.delete(id);
+    await this.trackService.delete(id);
   }
 }

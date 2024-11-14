@@ -1,53 +1,85 @@
 import { Injectable } from '@nestjs/common';
-import { Favorites } from './interfaces/favorites.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Favorites } from './favorites.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class FavoritesService {
-  private favorites: Favorites = { artists: [], albums: [], tracks: [] };
+  constructor(
+    @InjectRepository(Favorites)
+    private readonly favoritesRepository: Repository<Favorites>,
+  ) {}
 
-  findAll(): Favorites {
-    return this.favorites;
+  private async getFavorites(): Promise<Favorites> {
+    let favorites = await this.favoritesRepository.find();
+    if (!favorites[0]) {
+      favorites[0] = this.favoritesRepository.create();
+      await this.favoritesRepository.save(favorites);
+    }
+    return favorites[0];
   }
 
-  addTrack(id: string): string {
-    this.favorites.tracks.push(id);
+  async findAll() {
+    return await this.getFavorites();
+  }
+
+  async addTrack(id: string): Promise<string> {
+    const favorites = await this.getFavorites();
+    favorites.tracks.push(id);
+    await this.favoritesRepository.save(favorites);
     return `Track with id:${id} was added to favorites`;
   }
 
-  getTrackIndex(id: string): number {
-    return this.favorites.tracks.findIndex((trackId) => trackId === id);
+  async getTrackIndex(id: string): Promise<number> {
+    const favorites = await this.getFavorites();
+    const trackIndex = favorites.tracks.findIndex((trackId) => trackId === id);
+    return trackIndex
   }
 
-  deleteTrack(trackIndex: number): string {
-    if (trackIndex !== -1) this.favorites.tracks.splice(trackIndex, 1);
-    return `Track with  was deleted from favorites`;
+  async deleteTrack(trackIndex: number): Promise<string> {
+    const favorites = await this.getFavorites();
+    favorites.tracks.splice(trackIndex, 1);
+    await this.favoritesRepository.save(favorites);
+    return `Track with id:${trackIndex} was deleted from favorites`;
   }
 
-  addAlbum(id: string): string {
-    this.favorites.albums.push(id);
+  async addAlbum(id: string): Promise<string> {
+    const favorites = await this.getFavorites();
+    favorites.albums.push(id);
+    await this.favoritesRepository.save(favorites);
     return `Album with id:${id} was added to favorites`;
   }
 
-  getAlbumIndex(id: string): number {
-    return this.favorites.albums.findIndex((albumId) => albumId === id);
+  async getAlbumIndex(id: string): Promise<number> {
+    const favorites = await this.getFavorites();
+    const albumIndex = favorites.albums.findIndex((albumId) => albumId === id);
+    return albumIndex
   }
 
-  deleteAlbum(albumIndex: number): string {
-    if (albumIndex !== -1) this.favorites.albums.splice(albumIndex, 1);
-    return `Album with  was deleted from favorites`;
+  async deleteAlbum(albumIndex: number): Promise<string> {
+    const favorites = await this.getFavorites();
+    favorites.albums.splice(albumIndex, 1);
+    await this.favoritesRepository.save(favorites);
+    return `Album with id:${albumIndex} was deleted from favorites`;
   }
 
-  addArtist(id: string): string {
-    this.favorites.artists.push(id);
+  async addArtist(id: string): Promise<string> {
+    const favorites = await this.getFavorites();
+    favorites.artists.push(id);
+    await this.favoritesRepository.save(favorites);
     return `Artist with id:${id} was added to favorites`;
   }
 
-  getArtistIndex(id: string): number {
-    return this.favorites.artists.findIndex((artistId) => artistId === id);
+  async getArtistIndex(id: string): Promise<number> {
+    const favorites = await this.getFavorites();
+    const artistIndex = favorites.artists.findIndex((artistId) => artistId === id);
+    return artistIndex
   }
 
-  deleteArtist(artistIndex: number): string {
-    if (artistIndex !== -1) this.favorites.artists.splice(artistIndex, 1);
-    return `Artist with  was deleted from favorites`;
+  async deleteArtist(artyistIndex: number): Promise<string> {
+    const favorites = await this.getFavorites();
+    favorites.artists.splice(artyistIndex, 1);
+    await this.favoritesRepository.save(favorites);
+    return `Artist with id:${artyistIndex} was deleted from favorites`;
   }
 }
