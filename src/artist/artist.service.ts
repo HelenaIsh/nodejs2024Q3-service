@@ -51,7 +51,7 @@ export class ArtistService {
     if (result.affected === 0) {
       throw new NotFoundException(`Artist with id ${id} not found`);
     }
-    this.albumService.deleteArtist(id);
+    await this.albumService.deleteArtist(id);
     this.favoritesService.deleteArtist(
       this.favoritesService.getArtistIndex(id),
     );

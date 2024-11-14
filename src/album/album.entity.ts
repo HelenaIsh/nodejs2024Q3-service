@@ -1,13 +1,16 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
-export class Artist {
+export class Album {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   name: string;
 
-  @Column({ default: false })
-  grammy: boolean;
+  @Column()
+  year: number;
+
+  @Column({ nullable: true })
+  artistId: string | null;
 }

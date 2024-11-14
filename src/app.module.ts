@@ -9,6 +9,7 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Artist } from './artist/artist.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Album } from './album/album.entity';
 
 @Module({
   imports: [
@@ -24,12 +25,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [Artist], 
-        synchronize: true, 
+        entities: [Artist, Album],
+        synchronize: true,
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([Artist]),
+    TypeOrmModule.forFeature([Artist, Album]),
     UserModule,
     ArtistModule,
     TrackModule,

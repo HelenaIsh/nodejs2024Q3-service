@@ -14,7 +14,7 @@ import { TrackService } from 'src/track/track.service';
 import { isInstance, isUUID } from 'class-validator';
 import { AlbumService } from 'src/album/album.service';
 import { ArtistService } from 'src/artist/artist.service';
-import { Album } from 'src/album/interfaces/album.interface';
+import { Album } from 'src/album/album.entity';
 import { Track } from 'src/track/interfaces/track.interface';
 import { Artist } from 'src/artist/artist.entity';
 
@@ -28,14 +28,21 @@ export class FavoritesController {
   ) {}
 
   @Get()
-  async findAll(): Promise<{ artists: Artist[]; albums: Album[]; tracks: Track[] }> {
+  async findAll(): Promise<{
+    artists: Artist[];
+    albums: Album[];
+    tracks: Track[];
+  }> {
     const favs = this.favoritesService.findAll();
-    const artists = await Promise.all(favs.artists.map((artistId) =>
-      this.artistService.findOne(artistId),
-    ));
+    const artists = await Promise.all(
+      favs.artists.map((artistId) => this.artistService.findOne(artistId)),
+    );
+    const albums = await Promise.all(
+      favs.albums.map((albumId) => this.albumService.findOne(albumId)),
+    );
     return {
       artists,
-      albums: favs.albums.map((albumId) => this.albumService.findOne(albumId)),
+      albums,
       tracks: favs.tracks.map((trackId) => this.trackService.findOne(trackId)),
     };
   }
@@ -65,10 +72,10 @@ export class FavoritesController {
   }
 
   @Post('album/:id')
-  addAlbum(@Param('id') id: string): string {
+  async addAlbum(@Param('id') id: string): Promise<string> {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
     try {
-      this.albumService.findOne(id);
+      await this.albumService.findOne(id);
     } catch (e) {
       if (isInstance(e, NotFoundException)) {
         throw new HttpException(`Album with id ${id} does not exist`, 422);
