@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Album } from './album/album.entity';
 import { Favorites } from './favorites/favorites.entity';
 import { Track } from './track/track.entity';
+import { User } from './user/user.entity';
 
 @Module({
   imports: [
@@ -27,12 +28,12 @@ import { Track } from './track/track.entity';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [Artist, Album, Favorites, Track],
+        entities: [Artist, Album, Favorites, Track, User],
         synchronize: true,
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([Artist, Album, Favorites, Track]),
+    TypeOrmModule.forFeature([Artist, Album, Favorites, Track, User]),
     UserModule,
     ArtistModule,
     TrackModule,
