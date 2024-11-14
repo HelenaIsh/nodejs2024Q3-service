@@ -15,7 +15,7 @@ import { isInstance, isUUID } from 'class-validator';
 import { AlbumService } from 'src/album/album.service';
 import { ArtistService } from 'src/artist/artist.service';
 import { Album } from 'src/album/album.entity';
-import { Track } from 'src/track/interfaces/track.interface';
+import { Track } from 'src/track/track.entity';
 import { Artist } from 'src/artist/artist.entity';
 
 @Controller('favs')
@@ -40,10 +40,13 @@ export class FavoritesController {
     const albums = await Promise.all(
       favs.albums.map((albumId) => this.albumService.findOne(albumId)),
     );
+    const tracks = await Promise.all(
+      favs.tracks.map((trackId) => this.trackService.findOne(trackId)),
+    );
     return {
       artists,
       albums,
-      tracks: favs.tracks.map((trackId) => this.trackService.findOne(trackId)),
+      tracks,
     };
   }
 
@@ -51,7 +54,7 @@ export class FavoritesController {
   async addTrack(@Param('id') id: string): Promise<string> {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
     try {
-      this.trackService.findOne(id);
+      await this.trackService.findOne(id);
     } catch (e) {
       if (isInstance(e, NotFoundException)) {
         throw new HttpException(`Track with id ${id} does not exist`, 422);
