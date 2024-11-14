@@ -36,12 +36,12 @@ export class AlbumController {
   }
 
   @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto): Album {
+  async create(@Body() createAlbumDto: CreateAlbumDto): Promise<Album> {
     const artistId = createAlbumDto.artistId;
     if (artistId) {
       if (!isUUID(artistId)) throw new BadRequestException('Invalid UUID');
       try {
-        this.artistService.findOne(artistId);
+        await this.artistService.findOne(artistId);
       } catch (e) {
         if (isInstance(e, NotFoundException)) {
           throw new HttpException(
@@ -55,16 +55,16 @@ export class AlbumController {
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
-  ): Album {
+  ): Promise<Album> {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
     const artistId = updateAlbumDto.artistId;
     if (artistId) {
       if (!isUUID(artistId)) throw new BadRequestException('Invalid UUID');
       try {
-        this.artistService.findOne(artistId);
+        await this.artistService.findOne(artistId);
       } catch (e) {
         if (isInstance(e, NotFoundException)) {
           throw new HttpException(
