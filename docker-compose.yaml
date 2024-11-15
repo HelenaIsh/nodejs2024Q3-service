@@ -9,8 +9,13 @@ services:
       POSTGRES_PASSWORD: mypassword
     ports:
       - "5432:5432"
-      
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - db-logs:/var/log/postgresql
+    networks:
+      - my_custom_network
   app:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
@@ -24,3 +29,12 @@ services:
       DATABASE_NAME: mydatabase
     depends_on:
       - postgres
+    networks:
+      - my_custom_network
+volumes:
+  db-data:
+  db-logs:
+
+networks:
+  my_custom_network:
+    driver: bridge
