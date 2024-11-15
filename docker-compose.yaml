@@ -4,29 +4,30 @@ services:
       context: .
       dockerfile: Dockerfile.postgres
     environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:${DB_PORT}"
     volumes:
       - db-data:/var/lib/postgresql/data
       - db-logs:/var/log/postgresql
     networks:
       - my_custom_network
+
   app:
     restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "4000:4000"
+      - "${PORT}:${PORT}"
     environment:
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_USER: myuser
-      DATABASE_PASSWORD: mypassword
-      DATABASE_NAME: mydatabase
+      DATABASE_HOST: ${DB_HOST}
+      DATABASE_PORT: ${DB_PORT}
+      DATABASE_USER: ${DB_USERNAME}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_NAME: ${DB_DATABASE}
     depends_on:
       - postgres
     networks:
@@ -35,6 +36,7 @@ services:
       - ./src:/app/src
       - ./dist:/app/dist
       - /app/node_modules
+
 volumes:
   db-data:
   db-logs:
