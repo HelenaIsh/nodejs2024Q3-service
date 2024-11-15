@@ -31,6 +31,10 @@ services:
       - postgres
     networks:
       - my_custom_network
+    volumes:
+      - ./src:/app/src
+      - ./dist:/app/dist
+      - /app/node_modules
 volumes:
   db-data:
   db-logs:
