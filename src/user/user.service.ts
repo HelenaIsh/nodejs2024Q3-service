@@ -3,26 +3,34 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { User } from './interfaces/user.interface';
+import { User } from './user.entity';
 import { CreateUserDto } from './dto/user.dto';
 import { UpdatePasswordDto } from './dto/user.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
-  private users: User[] = [];
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-  findAll(): User[] {
-    return this.users.map((user) => ({ ...user, password: undefined }));
+  async findAll(): Promise<User[]> {
+    const users = await this.userRepository.find({
+      select: ['id', 'login', 'version', 'createdAt', 'updatedAt'],
+    });
+    return users;
   }
 
-  findOne(id: string): User {
-    const user = this.users.find((user) => user.id === id);
+  async findOne(id: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
     return { ...user, password: undefined };
   }
 
-  create(createUserDto: CreateUserDto): User {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser: User = {
       id: uuidv4(),
       login: createUserDto.login,
@@ -31,25 +39,34 @@ export class UserService {
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
-    this.users.push(newUser);
+    await this.userRepository.save(newUser);
     return { ...newUser, password: undefined };
   }
 
-  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
-    const user = this.users.find((user) => user.id === id);
+  async updatePassword(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
     if (user.password !== updatePasswordDto.oldPassword)
       throw new ForbiddenException('Old password is incorrect');
-    user.password = updatePasswordDto.newPassword;
-    user.version++;
-    user.updatedAt = Date.now();
-    return { ...user, password: undefined };
+
+    const newUser = await this.userRepository.preload({
+      id,
+      password: updatePasswordDto.newPassword,
+      version: user.version + 1,
+      createdAt: +user.createdAt,
+      updatedAt: Date.now(),
+    });
+    await this.userRepository.save(newUser);
+    return { ...newUser, password: undefined };
   }
 
-  delete(id: string): void {
-    const index = this.users.findIndex((user) => user.id === id);
-    if (index === -1)
+  async delete(id: string): Promise<void> {
+    const result = await this.userRepository.delete(id);
+    if (result.affected === 0) {
       throw new NotFoundException(`User with id ${id} not found`);
-    this.users.splice(index, 1);
+    }
   }
 }

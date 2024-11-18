@@ -12,7 +12,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
-import { Album } from './interfaces/album.interface';
+import { Album } from './album.entity';
 import { CreateAlbumDto, UpdateAlbumDto } from './dto/album.dto';
 import { isUUID, isInstance } from 'class-validator';
 import { ArtistService } from 'src/artist/artist.service';
@@ -25,23 +25,23 @@ export class AlbumController {
   ) {}
 
   @Get()
-  findAll(): Album[] {
-    return this.albumService.findAll();
+  async findAll(): Promise<Album[]> {
+    return await this.albumService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Album {
+  async findOne(@Param('id') id: string): Promise<Album> {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
-    return this.albumService.findOne(id);
+    return await this.albumService.findOne(id);
   }
 
   @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto): Album {
+  async create(@Body() createAlbumDto: CreateAlbumDto): Promise<Album> {
     const artistId = createAlbumDto.artistId;
     if (artistId) {
       if (!isUUID(artistId)) throw new BadRequestException('Invalid UUID');
       try {
-        this.artistService.findOne(artistId);
+        await this.artistService.findOne(artistId);
       } catch (e) {
         if (isInstance(e, NotFoundException)) {
           throw new HttpException(
@@ -51,20 +51,20 @@ export class AlbumController {
         }
       }
     }
-    return this.albumService.create(createAlbumDto);
+    return await this.albumService.create(createAlbumDto);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
-  ): Album {
+  ): Promise<Album> {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
     const artistId = updateAlbumDto.artistId;
     if (artistId) {
       if (!isUUID(artistId)) throw new BadRequestException('Invalid UUID');
       try {
-        this.artistService.findOne(artistId);
+        await this.artistService.findOne(artistId);
       } catch (e) {
         if (isInstance(e, NotFoundException)) {
           throw new HttpException(
@@ -74,13 +74,13 @@ export class AlbumController {
         }
       }
     }
-    return this.albumService.update(id, updateAlbumDto);
+    return await this.albumService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  delete(@Param('id') id: string): void {
+  async delete(@Param('id') id: string): Promise<void> {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
-    this.albumService.delete(id);
+    await this.albumService.delete(id);
   }
 }

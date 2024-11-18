@@ -12,7 +12,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
-import { Track } from './interfaces/track.interface';
+import { Track } from './track.entity';
 import { isUUID, isInstance } from 'class-validator';
 import { CreateTrackDto, UpdateTrackDto } from './dto/track.dto';
 import { AlbumService } from 'src/album/album.service';
@@ -27,24 +27,24 @@ export class TrackController {
   ) {}
 
   @Get()
-  findAll(): Track[] {
-    return this.trackService.findAll();
+  async findAll(): Promise<Track[]> {
+    return await this.trackService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Track {
+  async findOne(@Param('id') id: string): Promise<Track> {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
-    return this.trackService.findOne(id);
+    return await this.trackService.findOne(id);
   }
 
   @Post()
-  create(@Body() createTrackDto: CreateTrackDto): Track {
+  async create(@Body() createTrackDto: CreateTrackDto): Promise<Track> {
     const albumId = createTrackDto.albumId;
     const artistId = createTrackDto.artistId;
     if (albumId) {
       if (!isUUID(albumId)) throw new BadRequestException('Invalid UUID');
       try {
-        this.albumService.findOne(albumId);
+        await this.albumService.findOne(albumId);
       } catch (e) {
         if (isInstance(e, NotFoundException)) {
           throw new HttpException(
@@ -57,7 +57,7 @@ export class TrackController {
     if (artistId) {
       if (!isUUID(artistId)) throw new BadRequestException('Invalid UUID');
       try {
-        this.artistService.findOne(artistId);
+        await this.artistService.findOne(artistId);
       } catch (e) {
         if (isInstance(e, NotFoundException)) {
           throw new HttpException(
@@ -67,21 +67,21 @@ export class TrackController {
         }
       }
     }
-    return this.trackService.create(createTrackDto);
+    return await this.trackService.create(createTrackDto);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateTrackDto: UpdateTrackDto,
-  ): Track {
+  ): Promise<Track> {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
     const albumId = updateTrackDto.albumId;
     const artistId = updateTrackDto.artistId;
     if (albumId) {
       if (!isUUID(albumId)) throw new BadRequestException('Invalid UUID');
       try {
-        this.albumService.findOne(albumId);
+        await this.albumService.findOne(albumId);
       } catch (e) {
         if (isInstance(e, NotFoundException)) {
           throw new HttpException(
@@ -94,7 +94,7 @@ export class TrackController {
     if (artistId) {
       if (!isUUID(artistId)) throw new BadRequestException('Invalid UUID');
       try {
-        this.artistService.findOne(artistId);
+        await this.artistService.findOne(artistId);
       } catch (e) {
         if (isInstance(e, NotFoundException)) {
           throw new HttpException(
@@ -104,13 +104,13 @@ export class TrackController {
         }
       }
     }
-    return this.trackService.update(id, updateTrackDto);
+    return await this.trackService.update(id, updateTrackDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  delete(@Param('id') id: string): void {
+  async delete(@Param('id') id: string): Promise<void> {
     if (!isUUID(id)) throw new BadRequestException('Invalid UUID');
-    this.trackService.delete(id);
+    await this.trackService.delete(id);
   }
 }
