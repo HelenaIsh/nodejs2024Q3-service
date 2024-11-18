@@ -76,7 +76,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 #### Prerequisites
 - Docker (version 20.x or later)
 
-You can find my docker image on [dockerhub](https://hub.docker.com/repository/docker/helenaish/nodejs2024q3-service)
+You can find my docker image on [dockerhub](https://hub.docker.com/repository/docker/helenaish/nodejs2024q3-service-app)
 
 To build and run docker container:
 ```
