@@ -80,7 +80,7 @@ You can find my docker image on [dockerhub](https://hub.docker.com/repository/do
 
 To build and run docker container:
 ```
-docker-compose up
+docker-compose up --build
 ```
 
 To stop container:
