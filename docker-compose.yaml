@@ -1,5 +1,6 @@
 services:
   postgres:
+    image: helenaish/nodejs2024q3-service-postgres
     build:
       context: .
       dockerfile: Dockerfile.postgres
@@ -16,6 +17,7 @@ services:
       - my_custom_network
 
   app:
+    image: helenaish/nodejs2024q3-service-app
     restart: unless-stopped
     build:
       context: .
@@ -36,7 +38,7 @@ services:
       - ./src:/app/src
       - ./dist:/app/dist
       - /app/node_modules
-
+      - ./logs:/app/dist/logs
 volumes:
   db-data:
   db-logs:
