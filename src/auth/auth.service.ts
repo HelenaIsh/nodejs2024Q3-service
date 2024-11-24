@@ -21,7 +21,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signup(signupDto: SignupDto): Promise<{ id: string, message: string }> {
+  async signup(signupDto: SignupDto): Promise<{ id: string; message: string }> {
     const { login, password } = signupDto;
 
     const existingUser = await this.userRepository.findOne({
@@ -33,7 +33,7 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const id = uuidv4()
+    const id = uuidv4();
 
     const newUser = this.userRepository.create({
       id,
@@ -58,16 +58,16 @@ export class AuthService {
       if (!user) {
         throw new UnauthorizedException('Invalid credentials');
       }
-  
+
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid credentials');
       }
-  
+
       const payload = { userId: user.id, login: user.login };
       const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
       const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
-  
+
       return { accessToken, refreshToken };
     } catch (error) {
       console.error('Error during login:', error);

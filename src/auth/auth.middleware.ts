@@ -23,7 +23,7 @@ export class AuthMiddleware implements NestMiddleware {
     // }
 
     const authHeader = req.headers.authorization;
-    log(authHeader)
+    log(authHeader);
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedException(
         'Authorization header is missing or invalid',
