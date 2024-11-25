@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -13,11 +13,20 @@ import { Album } from './album/album.entity';
 import { Favorites } from './favorites/favorites.entity';
 import { Track } from './track/track.entity';
 import { User } from './user/user.entity';
+import { LoggingModule } from './logging/logging.module';
+import { LoggingMiddleware } from './logging/logging.middleware';
+import { AuthModule } from './auth/auth.module';
+import { AuthMiddleware } from './auth/auth.middleware';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.JWT_ACCESS_EXPIRATION },
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -39,8 +48,19 @@ import { User } from './user/user.entity';
     TrackModule,
     AlbumModule,
     FavoritesModule,
+    LoggingModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthMiddleware],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggingMiddleware).forRoutes('*');
+
+    consumer
+      .apply(AuthMiddleware)
+      .exclude('/auth/signup', '/auth/login', '/', '/doc')
+      .forRoutes('*');
+  }
+}

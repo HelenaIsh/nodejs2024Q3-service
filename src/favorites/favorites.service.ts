@@ -11,7 +11,7 @@ export class FavoritesService {
   ) {}
 
   private async getFavorites(): Promise<Favorites> {
-    let favorites = await this.favoritesRepository.find();
+    const favorites = await this.favoritesRepository.find();
     if (!favorites[0]) {
       favorites[0] = this.favoritesRepository.create();
       await this.favoritesRepository.save(favorites);
