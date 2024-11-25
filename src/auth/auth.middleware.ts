@@ -12,16 +12,6 @@ export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
-    // const publicRoutes = [
-    //   '/auth/signup',
-    //   '/auth/login',
-    //   '/auth/refresh',
-    //   '/doc'
-    // ];
-    // if (publicRoutes.some(route => req.originalUrl.startsWith(route))) {
-    //   return next();
-    // }
-
     const authHeader = req.headers.authorization;
     log(authHeader);
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
